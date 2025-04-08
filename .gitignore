@@ -1,0 +1,14 @@
+.idea
+.iml
+.eml
+
+/.env
+/*.env
+
+/mqtt-config/listener_*/passwd
+/mqtt-config/conf.d/*bridge*.conf
+
+/traefik/authorized-users
+
+backups/*.backup
+

@@ -1,0 +1,8 @@
+connection mzf2ffw_it
+address server.vpn.ffw-it.de:1884
+remote_username bridge_mzf
+remote_password verysecret
+remote_clientid bridge_mzf-ffw_it
+try_private true
+
+topic # both 1 server/ ffw/woe/mzf

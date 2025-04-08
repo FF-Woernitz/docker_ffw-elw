@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+cd "$(dirname "$0")"
+mkdir -p backups
+
+backup_file_name="backups/$(date +'%d-%m-%Y_%H-%M-%S').backup"
+
+echo "Getting backup data"
+echo -e "Version:" > $backup_file_name
+docker compose version >> $backup_file_name
+echo -e "\n\n###############################################\nPS:" >> $backup_file_name
+docker compose ps >> $backup_file_name
+echo -e "\n\n###############################################\nImages:" >> $backup_file_name
+docker compose images >> $backup_file_name
+echo -e "\n\n###############################################\nTop:" >> $backup_file_name
+docker compose top >> $backup_file_name
+echo -e "\n\n###############################################\nConfig:" >> $backup_file_name
+docker compose config >> $backup_file_name
+
+echo "Starting update"
+echo -e "\n\n###############################################\nBuild:" | tee -a $backup_file_name
+docker compose build --pull --force-rm 2>&1 | tee -a $backup_file_name
+echo -e "\n\n###############################################\nPull:" | tee -a $backup_file_name
+docker compose pull 2>&1 | tee -a $backup_file_name
+
+read -p "Should we bring the new containers up? [y/N]" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    echo -e "\n\n###############################################\nUp:" >> $backup_file_name
+    docker compose up -d 2>&1 | tee -a $backup_file_name
+fi

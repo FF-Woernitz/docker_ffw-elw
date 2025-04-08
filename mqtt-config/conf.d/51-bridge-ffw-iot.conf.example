@@ -1,0 +1,8 @@
+connection mzf2ffw_iot
+address iot.vpn.ffw-it.de:1883
+remote_username bridge_mzf
+remote_password verysecret
+remote_clientid bridge_mzf-ffw_iot
+try_private true
+
+topic # both 1 iot/ mzf/

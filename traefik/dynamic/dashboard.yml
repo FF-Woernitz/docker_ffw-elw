@@ -1,0 +1,7 @@
+http:
+  routers:
+    router-dashboard:
+      rule: "Host(`traefik.mzf.ffw-it.de`)"
+      entrypoints: web
+      middlewares: authorized-users@file
+      service: "api@internal"

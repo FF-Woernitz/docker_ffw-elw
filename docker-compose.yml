@@ -1,0 +1,101 @@
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+volumes:
+  mqtt_data:
+  node-red_data:
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    restart: unless-stopped
+    networks:
+      - backend
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/config.yml:/etc/traefik/traefik.yml:ro"
+      - "./traefik/dynamic:/etc/traefik/dynamic:ro"
+      - "./traefik/authorized-users:/authorized-users:ro"
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      - TZ=Europe/Berlin
+      - WATCHTOWER_MONITOR_ONLY=true
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_NOTIFICATION_URL}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      TZ: Europe/Berlin
+    ports:
+      - "1883:1883"
+      - "8884:8884"
+    volumes:
+      - ./mqtt-config:/mosquitto/config
+      - mqtt_data:/mosquitto/data
+
+  node-red:
+    container_name: node-red
+    image: nodered/node-red
+    restart: unless-stopped
+    networks:
+      - backend
+    ports:
+      - "1880:1880"
+    environment:
+      NODE_RED_ENABLE_PROJECTS: true
+      TZ: Europe/Berlin
+    volumes:
+      - node-red_data:/data
+    user: node-red
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node-red.rule=Host(`flow.mzf.ffw-it.de`)"
+      - "traefik.http.routers.node-red.entrypoints=web"
+      - "traefik.http.services.node-red.loadbalancer.server.port=1880"
+
+  web-monitor:
+    container_name: web-monitor
+    image: joseluisq/static-web-server:2
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      TZ: Europe/Berlin
+      SERVER_HOST: 0.0.0.0
+      SERVER_CACHE_CONTROL_HEADERS: false
+    volumes:
+      - /opt/www-monitor:/public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.monitor-local.rule=Host(`monitor.mzf.ffw-it.de`) && ClientIP(`127.0.0.1`)"
+      - "traefik.http.routers.monitor-local.entrypoints=web"
+
+      - "traefik.http.routers.monitor-auth.rule=Host(`monitor.mzf.ffw-it.de`)"
+      - "traefik.http.routers.monitor-auth.middlewares=authorized-users@file"
+      - "traefik.http.routers.monitor-auth.entrypoints=web"
+
+      - "traefik.http.services.monitor.loadbalancer.server.port=80"
