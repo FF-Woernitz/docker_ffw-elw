@@ -1,6 +1,9 @@
 user ffw-mzf-monitor-1-web
-topic read in-server/monitor/1-web/#
-topic write out-server/woe/monitor/1-web/heartbeat
+topic read server/monitor/1-web/#
+topic write server/monitor/1-web/heartbeat
+
+user router
+topic readwrite router/#
 
 user tobsa
 topic readwrite #
