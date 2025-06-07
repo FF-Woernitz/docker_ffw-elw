@@ -126,8 +126,6 @@ services:
 
   modbus2mqtt:
     container_name: m2m
-#    entrypoint: /bin/sleep
-#    command: "10000"
     image: ghcr.io/ff-woernitz/mzf-modbustcp2mqtt:master
     restart: unless-stopped
     networks:
