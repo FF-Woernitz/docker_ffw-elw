@@ -1,0 +1,11 @@
+tls:
+  stores:
+    default:
+      defaultGeneratedCert:
+        resolver: letsencrypt
+        domain:
+          main: mzf.ffw-it.de
+          sans:
+            - "*.mzf.ffw-it.de"
+            - "mzf.vpn.ffw-it.de"
+            - "*.mzf.vpn.ffw-it.de"

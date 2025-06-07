@@ -1,7 +1,8 @@
 http:
   routers:
-    router-dashboard:
+    router-dashboard-ssl:
       rule: "Host(`traefik.mzf.ffw-it.de`)"
-      entrypoints: web
+      entrypoints: websecure
       middlewares: authorized-users@file
+      tls: true
       service: "api@internal"

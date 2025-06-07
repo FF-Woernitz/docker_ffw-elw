@@ -8,6 +8,7 @@ networks:
           gateway: 172.20.0.1
 
 volumes:
+  traefik-certs_data:
   mqtt_data:
   node-red_data:
 
@@ -21,12 +22,19 @@ services:
     ports:
       # Public HTTP Port:
       - '80:80'
+      # Public HTTPS Port:
+      - '443:443'
+      # MQTT
+      - '8883:8883'
+      - '8884:8884'
     environment:
+      - HETZNER_API_KEY=${HETZNER_API_KEY}
       - TZ=Europe/Berlin
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./traefik/config.yml:/etc/traefik/traefik.yml:ro"
       - "./traefik/dynamic:/etc/traefik/dynamic:ro"
+      - "traefik-certs_data:/etc/traefik/certs"
       - "./traefik/authorized-users:/authorized-users:ro"
 
   watchtower:
@@ -52,10 +60,23 @@ services:
       TZ: Europe/Berlin
     ports:
       - "1883:1883"
-      - "8884:8884"
     volumes:
       - ./mqtt-config:/mosquitto/config
       - mqtt_data:/mosquitto/data
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.tcp.routers.mqtt-private.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.mqtt-private.entrypoints=mqtt-private"
+      - "traefik.tcp.routers.mqtt-private.tls=true"
+      - "traefik.tcp.routers.mqtt-private.service=mqtt-private"
+      - "traefik.tcp.services.mqtt-private.loadbalancer.server.port=8883"
+
+      - "traefik.tcp.routers.mqtt-private-ws.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.mqtt-private-ws.entrypoints=mqtt-private-ws"
+      - "traefik.tcp.routers.mqtt-private-ws.tls=true"
+      - "traefik.tcp.routers.mqtt-private-ws.service=mqtt-private-ws"
+      - "traefik.tcp.services.mqtt-private-ws.loadbalancer.server.port=8884"
 
   node-red:
     container_name: node-red
@@ -63,8 +84,6 @@ services:
     restart: unless-stopped
     networks:
       - backend
-    ports:
-      - "1880:1880"
     environment:
       NODE_RED_ENABLE_PROJECTS: true
       TZ: Europe/Berlin
@@ -74,7 +93,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.node-red.rule=Host(`flow.mzf.ffw-it.de`)"
-      - "traefik.http.routers.node-red.entrypoints=web"
+      - "traefik.http.routers.node-red.entrypoints=websecure"
+      - "traefik.http.routers.node-red.middlewares=authorized-users@file"
+      - "traefik.http.routers.node-red.tls=true"
       - "traefik.http.services.node-red.loadbalancer.server.port=1880"
 
   web-monitor:
@@ -91,11 +112,13 @@ services:
       - /opt/www-monitor:/public
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.monitor-local.rule=Host(`monitor.mzf.ffw-it.de`) && ClientIP(`127.0.0.1`)"
-      - "traefik.http.routers.monitor-local.entrypoints=web"
+      - "traefik.http.routers.monitor-local.rule=Host(`monitor.mzf.ffw-it.de`) && ClientIP(`10.2.101.10`)"
+      - "traefik.http.routers.monitor-local.entrypoints=websecure"
+      - "traefik.http.routers.monitor-local.tls=true"
 
       - "traefik.http.routers.monitor-auth.rule=Host(`monitor.mzf.ffw-it.de`)"
       - "traefik.http.routers.monitor-auth.middlewares=authorized-users@file"
-      - "traefik.http.routers.monitor-auth.entrypoints=web"
+      - "traefik.http.routers.monitor-auth.entrypoints=websecure"
+      - "traefik.http.routers.monitor-auth.tls=true"
 
       - "traefik.http.services.monitor.loadbalancer.server.port=80"
