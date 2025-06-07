@@ -11,6 +11,7 @@ volumes:
   traefik-certs_data:
   mqtt_data:
   node-red_data:
+  modbus2mqtt_data:
 
 services:
   traefik:
@@ -122,3 +123,24 @@ services:
       - "traefik.http.routers.monitor-auth.tls=true"
 
       - "traefik.http.services.monitor.loadbalancer.server.port=80"
+
+  modbus2mqtt:
+    container_name: m2m
+#    entrypoint: /bin/sleep
+#    command: "10000"
+    image: ghcr.io/ff-woernitz/mzf-modbustcp2mqtt:master
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      TZ: Europe/Berlin
+      M2M_MQTT_SERVER: mqtt
+      M2M_MQTT_PORT: 1883
+      M2M_MQTT_BASE_TOPIC: mzf_modbus
+      M2M_MODBUS_COIL_SIZE: 64
+      M2M_MODBUS_DINP_SIZE: 0
+      M2M_MODBUS_ALLOWED_IPS: '10.2.102.231,10.0.110.100'
+    ports:
+      - "502:502"
+    volumes:
+      - modbus2mqtt_data:/opt/backup
