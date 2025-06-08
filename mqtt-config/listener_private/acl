@@ -5,5 +5,8 @@ topic write server/monitor/1-web/heartbeat
 user router
 topic readwrite router/#
 
+user mzf-gpio2mqtt
+topic readwrite mzf_gpio/#
+
 user tobsa
 topic readwrite #
