@@ -110,7 +110,7 @@ services:
       SERVER_HOST: 0.0.0.0
       SERVER_CACHE_CONTROL_HEADERS: false
     volumes:
-      - /opt/www-monitor:/public
+      - /opt/www-monitor-new:/public
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.monitor-local.rule=Host(`monitor.mzf.ffw-it.de`) && ClientIP(`10.2.101.10`)"
