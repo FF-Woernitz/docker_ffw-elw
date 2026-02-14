@@ -12,6 +12,8 @@ volumes:
   mqtt_data:
   node-red_data:
   modbus2mqtt_data:
+  influxdb-config:
+  influxdb-data:
 
 services:
   traefik:
@@ -142,3 +144,30 @@ services:
       - "502:502"
     volumes:
       - modbus2mqtt_data:/opt/backup
+
+  influxdb:
+    container_name: influxdb
+    image: influxdb:2-alpine
+    restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - influxdb-config:/etc/influxdb2
+      - influxdb-data:/var/lib/influxdb2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb.mzf.ffw-it.de`)"
+      - "traefik.http.routers.influxdb.entrypoints=websecure"
+      - "traefik.http.routers.influxdb.tls=true"
+      - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
+
+  telegraf:
+    container_name: telegraf
+    image: telegraf:alpine
+    restart: unless-stopped
+    networks:
+      - backend
+    ports:
+      - "2055:2055/udp"
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
