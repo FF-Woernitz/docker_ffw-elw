@@ -38,7 +38,19 @@ services:
       - "./traefik/config.yml:/etc/traefik/traefik.yml:ro"
       - "./traefik/dynamic:/etc/traefik/dynamic:ro"
       - "traefik-certs_data:/etc/traefik/certs"
-      - "./traefik/authorized-users:/authorized-users:ro"
+
+
+  authentik_proxy:
+    container_name: authentik_proxy
+    image: ghcr.io/goauthentik/proxy:2025.12.4
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      - AUTHENTIK_HOST=https://auth.ffw-it.de
+      - AUTHENTIK_INSECURE=false
+    env_file:
+      - authentik.env
 
   watchtower:
     container_name: watchtower
@@ -97,7 +109,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.node-red.rule=Host(`flow.mzf.ffw-it.de`)"
       - "traefik.http.routers.node-red.entrypoints=websecure"
-      - "traefik.http.routers.node-red.middlewares=authorized-users@file"
+      - "traefik.http.routers.node-red.middlewares=sso-auth@file"
       - "traefik.http.routers.node-red.tls=true"
       - "traefik.http.services.node-red.loadbalancer.server.port=1880"
 
@@ -120,14 +132,14 @@ services:
       - "traefik.http.routers.monitor-local.tls=true"
 
       - "traefik.http.routers.monitor-auth.rule=Host(`monitor.mzf.ffw-it.de`)"
-      - "traefik.http.routers.monitor-auth.middlewares=authorized-users@file"
+      - "traefik.http.routers.monitor-auth.middlewares=sso-auth@file"
       - "traefik.http.routers.monitor-auth.entrypoints=websecure"
       - "traefik.http.routers.monitor-auth.tls=true"
 
       - "traefik.http.services.monitor.loadbalancer.server.port=80"
 
   modbus2mqtt:
-    container_name: m2m
+    container_name: modbus2mqtt
     image: ghcr.io/ff-woernitz/mzf-modbustcp2mqtt:master
     restart: unless-stopped
     networks:
