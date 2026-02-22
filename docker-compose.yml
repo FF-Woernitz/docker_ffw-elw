@@ -149,8 +149,8 @@ services:
       M2M_MQTT_SERVER: mqtt
       M2M_MQTT_PORT: 1883
       M2M_MQTT_BASE_TOPIC: mzf_modbus
-      M2M_MODBUS_COIL_SIZE: 64
-      M2M_MODBUS_DINP_SIZE: 0
+      M2M_MODBUS_COIL_SIZE: 100
+      M2M_MODBUS_DINP_SIZE: 50
       M2M_MODBUS_ALLOWED_IPS: '10.2.102.231,10.0.110.100'
     ports:
       - "502:502"
