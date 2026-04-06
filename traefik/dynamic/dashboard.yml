@@ -1,7 +1,7 @@
 http:
   routers:
     router-dashboard-ssl:
-      rule: "Host(`traefik.mzf.ffw-it.de`)"
+      rule: "Host(`traefik.mzf.vpn.ffw-it.de`)"
       entrypoints: websecure
       middlewares: sso-auth@file
       tls: true

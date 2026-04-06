@@ -43,7 +43,7 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: acme+ffw@tobsa.wtf
+      email: technik@ff-woernitz.de
       storage: /etc/traefik/certs/acme.json
 #      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       dnsChallenge:

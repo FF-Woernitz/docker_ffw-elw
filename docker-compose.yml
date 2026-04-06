@@ -107,7 +107,7 @@ services:
     user: node-red
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.node-red.rule=Host(`flow.mzf.ffw-it.de`)"
+      - "traefik.http.routers.node-red.rule=Host(`flow.mzf.vpn.ffw-it.de`)"
       - "traefik.http.routers.node-red.entrypoints=websecure"
       - "traefik.http.routers.node-red.middlewares=sso-auth@file"
       - "traefik.http.routers.node-red.tls=true"
@@ -127,11 +127,11 @@ services:
       - /opt/www-monitor-new:/public
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.monitor-local.rule=Host(`monitor.mzf.ffw-it.de`) && ClientIP(`10.2.101.10`)"
+      - "traefik.http.routers.monitor-local.rule=Host(`monitor.mzf.vpn.ffw-it.de`) && ClientIP(`10.2.101.10`)"
       - "traefik.http.routers.monitor-local.entrypoints=websecure"
       - "traefik.http.routers.monitor-local.tls=true"
 
-      - "traefik.http.routers.monitor-auth.rule=Host(`monitor.mzf.ffw-it.de`)"
+      - "traefik.http.routers.monitor-auth.rule=Host(`monitor.mzf.vpn.ffw-it.de`)"
       - "traefik.http.routers.monitor-auth.middlewares=sso-auth@file"
       - "traefik.http.routers.monitor-auth.entrypoints=websecure"
       - "traefik.http.routers.monitor-auth.tls=true"
@@ -168,7 +168,7 @@ services:
       - influxdb-data:/var/lib/influxdb2
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.influxdb.rule=Host(`influxdb.mzf.ffw-it.de`)"
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb.mzf.vpn.ffw-it.de`)"
       - "traefik.http.routers.influxdb.entrypoints=websecure"
       - "traefik.http.routers.influxdb.tls=true"
       - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
@@ -183,3 +183,10 @@ services:
       - "2055:2055/udp"
     volumes:
       - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
+  vlmcsd:
+    container_name: vlmcsd
+    image: ghcr.io/tobsa13/vlmcsd:master
+    ports:
+      - "1688:1688/tcp"
+    restart: unless-stopped
