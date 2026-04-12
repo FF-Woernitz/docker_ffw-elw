@@ -14,6 +14,7 @@ volumes:
   modbus2mqtt_data:
   influxdb-config:
   influxdb-data:
+  zabbix_proxy-data:
 
 services:
   traefik:
@@ -187,6 +188,28 @@ services:
   vlmcsd:
     container_name: vlmcsd
     image: ghcr.io/tobsa13/vlmcsd:master
+    networks:
+      - backend
     ports:
       - "1688:1688/tcp"
     restart: unless-stopped
+
+  zabbix_proxy:
+    container_name: zabbix_proxy
+    image: zabbix/zabbix-proxy-sqlite3:alpine-6.0-latest
+    networks:
+      - backend
+    environment:
+      ZBX_HOSTNAME: z.mzf.vpn.ffw-it.de
+      ZBX_SERVER_HOST: z.tobsa.dev
+      ZBX_PROXYMODE: 0
+      ZBX_PROXYCONFIGFREQUENCY: 30
+      ZBX_DATASENDERFREQUENCY: 10
+      ZBX_ENABLEREMOTECOMMANDS: 0
+      ZBX_PROXYOFFLINEBUFFER: 72
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - zabbix_proxy-data:/var/lib/zabbix/db_data
+
