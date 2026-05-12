@@ -43,7 +43,7 @@ services:
 
   authentik_proxy:
     container_name: authentik_proxy
-    image: ghcr.io/goauthentik/proxy:2025.12.4
+    image: ghcr.io/goauthentik/proxy:2026.2.3
     restart: unless-stopped
     networks:
       - backend
@@ -203,7 +203,6 @@ services:
       ZBX_HOSTNAME: z.mzf.vpn.ffw-it.de
       ZBX_SERVER_HOST: z.tobsa.dev
       ZBX_PROXYMODE: 0
-      ZBX_PROXYCONFIGFREQUENCY: 30
       ZBX_DATASENDERFREQUENCY: 10
       ZBX_ENABLEREMOTECOMMANDS: 0
       ZBX_PROXYOFFLINEBUFFER: 72
