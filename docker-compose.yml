@@ -158,6 +158,17 @@ services:
     volumes:
       - modbus2mqtt_data:/opt/backup
 
+  can-server:
+    container_name: can-server
+    image: ghcr.io/ff-woernitz/mzf-can2mqtt:master
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      TZ: Europe/Berlin
+    volumes:
+      - ./can-server.toml:/app/config.toml:r
+
   influxdb:
     container_name: influxdb
     image: influxdb:2-alpine

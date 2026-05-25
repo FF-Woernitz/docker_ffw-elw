@@ -8,5 +8,8 @@ topic readwrite router/#
 user mzf-gpio2mqtt
 topic readwrite mzf_gpio/#
 
+user mzf-can
+topic readwrite mzf_can/#
+
 user tobsa
 topic readwrite #

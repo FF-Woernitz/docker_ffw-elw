@@ -12,3 +12,4 @@
 
 backups/*.backup
 
+can-server.toml
