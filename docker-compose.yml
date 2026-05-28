@@ -32,7 +32,7 @@ services:
       - '8883:8883'
       - '8884:8884'
     environment:
-      - HETZNER_API_KEY=${HETZNER_API_KEY}
+      - HETZNER_API_TOKEN=${HETZNER_API_TOKEN}
       - TZ=Europe/Berlin
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
