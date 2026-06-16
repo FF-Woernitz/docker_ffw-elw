@@ -5,4 +5,5 @@ tls:
         resolver: letsencrypt
         domain:
           main: mzf.vpn.ffw-it.de
+          sans:
             - "*.mzf.vpn.ffw-it.de"
