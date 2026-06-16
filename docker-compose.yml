@@ -43,7 +43,7 @@ services:
 
   authentik_proxy:
     container_name: authentik_proxy
-    image: ghcr.io/goauthentik/proxy:2026.5.2
+    image: ghcr.io/goauthentik/proxy:2026.5.3
     restart: unless-stopped
     networks:
       - backend
