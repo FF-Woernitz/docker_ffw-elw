@@ -223,3 +223,25 @@ services:
     volumes:
       - zabbix_proxy-data:/var/lib/zabbix/db_data
 
+  email2print:
+    container_name: email2print
+    image: topgoodman/email2print:latest
+    networks:
+      - backend
+    environment:
+      PRINTER_NAME: Einsatzdrucker_MZF
+      IMAP_PORT: 993
+      ALLOWED_ATTACHMENT_TYPES: pdf,docx,txt,jpeg,jpg,png
+      SMTP_PORT: 587
+
+      IMAP_SERVER: secure.emailsrvr.com
+      SMTP_SERVER: secure.emailsrvr.com
+      SLEEP_TIME: 30
+      DETAILED_CONFIRMATION: true
+    env_file:
+      - email2print.env
+    restart: unless-stopped
+    volumes:
+      - /var/run/cups/cups.sock:/var/run/cups/cups.sock
+
+
