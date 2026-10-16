@@ -75,7 +75,7 @@ services:
     environment:
       TZ: Europe/Berlin
     ports:
-      - "1883:1883"
+      - "1884:1884"
     volumes:
       - ./mqtt-config:/mosquitto/config
       - mqtt_data:/mosquitto/data
