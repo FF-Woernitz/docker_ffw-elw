@@ -43,7 +43,7 @@ services:
 
   authentik_proxy:
     container_name: authentik_proxy
-    image: ghcr.io/goauthentik/proxy:2026.5.7
+    image: ghcr.io/goauthentik/proxy:2026.8.4
     restart: unless-stopped
     networks:
       - backend
@@ -188,7 +188,7 @@ services:
 
   zabbix_proxy:
     container_name: zabbix_proxy
-    image: zabbix/zabbix-proxy-sqlite3:alpine-6.0-latest
+    image: zabbix/zabbix-proxy-sqlite3:alpine-7.0-latest
     networks:
       - backend
     environment:
