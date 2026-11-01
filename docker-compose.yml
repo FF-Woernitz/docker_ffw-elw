@@ -11,7 +11,6 @@ volumes:
   traefik-certs_data:
   mqtt_data:
   node-red_data:
-  modbus2mqtt_data:
   influxdb-config:
   influxdb-data:
   zabbix_proxy-data:
@@ -148,7 +147,7 @@ services:
     environment:
       TZ: Europe/Berlin
     volumes:
-      - ./can-server.toml:/app/config.toml:r
+      - ./can-server.toml:/app/config.toml:ro
 
   influxdb:
     container_name: influxdb

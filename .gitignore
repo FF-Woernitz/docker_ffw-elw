@@ -13,3 +13,4 @@
 backups/*.backup
 
 can-server.toml
+telegraf.conf
